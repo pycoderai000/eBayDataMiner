@@ -1,0 +1,60 @@
+A) Making Requests:
+1. Asynchronous Requests:
+   - Requests a chunk of links asynchronously.
+   - Implements sleep intervals between chunks to avoid blocking.
+
+2. Retry Logic:
+   - Retries on failure with the following status codes: [500, 503, 504, 400, 429, 408].
+   - Implements exponential backoff for retry attempts, starting with a base sleep time and increasing with each retry.
+
+3. Proxy Management:
+   - Initialization:
+     - Loads a list of proxies from a proxy.txt file.
+   - Proxy Assignment:
+     - Distributes proxies evenly across all requests in a chunk.
+     - Assigns a proxy to each request dynamically from the list of available proxies.
+   - Proxy Monitoring and Exclusion:
+     - Implements a monitoring system to track the status of each proxy.
+     - Excludes a proxy from the pool if it fails multiple requests due to blocking or other errors.
+     - Maintains a log of excluded proxies and the reasons for their exclusion.
+   - Proxy Rotation:
+     - Rotates proxies to avoid overloading a single proxy.
+     - Uses a random selection method for proxy assignment to ensure fair usage.
+   - Retry with New Proxy:
+     - On request failure due to proxy issues, retries the request with a different proxy.
+     - Implements logic to ensure the same proxy is not reused for a failed request.
+
+B) Saving Files:
+1. File Formats:
+   - Saves output in one of the following formats: json, jsonlines, or parquet.
+   - The format is specified in the configuration file.
+
+2. Asynchronous Saving:
+   - Saves data after processing each chunk to avoid large, time-consuming writes at the end.
+   - Performs file saving asynchronously to avoid blocking the main scraping process.
+
+3. Data Structure:
+   - Follows the structure provided in the output.json file for consistency.
+
+C) Logging:
+1. Comprehensive Logging:
+   - Logs both to a file and prints to the console during execution.
+   - Includes the following details in each log entry: [Timestamp, Input URL, Proxy Used, Returned Status Code, Comment].
+   - Logs a message when a proxy is excluded.
+     - Comment: "Proxy [proxy] excluded due to failure".
+
+2. Log Comments:
+   - On success (status 200), logs "success".
+   - On failure, logs "retrying_num" for each retry attempt.
+   - If all retries fail, logs "failed after all retrying".
+
+D) Configuration File:
+   - Controls various script settings and variables through a configuration file:
+     - Chunk Size (e.g., 100)
+     - Sleep time between chunks (e.g., 2 seconds)
+     - Retry times (e.g., 3)
+     - Initial sleep for each retry
+     - Proxy (true or false)
+     - Output file type (json|jsonlines|parquet)
+
+ebay_scraper project strictly followed all above given requirements and taking 2-3 minutes to finish run.   
